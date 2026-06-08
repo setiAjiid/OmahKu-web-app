@@ -96,8 +96,8 @@ INSERT IGNORE INTO booking (property_id, customer_id, requested_start_date, requ
 INSERT IGNORE INTO `transaction`
   (booking_id, property_id, customer_id, agent_id, transaction_type, agreed_amount, status, completed_at) VALUES
 (1, 1, 5, 2, 'sale', 2500000000.00, 'success', '2024-03-01 14:00:00'),
-(2, 2, 5, 2, 'rent',   15000000.00, 'success', '2024-01-05 10:00:00'),
-(3, 3, 4, 3, 'rent',   35000000.00, 'success', '2024-02-12 09:00:00');
+(2, 2, 5, 2, 'rent',     90500000.00, 'success', '2024-01-05 10:00:00'),  -- 15jt x 6 bln + fee 500rb
+(3, 3, 4, 3, 'rent',     35000000.00, 'success', '2024-02-12 09:00:00');  -- 5jt x 7 hari
 
 -- Detail transaksi jual (transaction_id=1)
 INSERT IGNORE INTO sale_transaction (transaction_id, transfer_date, certificate_number) VALUES
