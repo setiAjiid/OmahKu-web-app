@@ -54,12 +54,12 @@ INSERT IGNORE INTO agent_profile (user_id, agency_name, license_number, bio, ver
 INSERT IGNORE INTO property
   (owner_id, agent_id, category_id, location_id, title, address_detail,
    land_area, building_area, bedrooms, bathrooms, floors, year_built,
-   certificate_type, listing_type, price, status) VALUES
-(4, 2, 1, 1, 'Rumah Mewah Kebayoran Baru',    'Jl. Melati No. 12, Kebayoran Baru',    200.00, 350.00, 4, 3, 2, 2018, 'SHM',  'sale', 2500000000.00, 'sold'),
-(4, 2, 2, 2, 'Apartemen Modern Menteng',       'Jl. Diponegoro No. 5, Menteng',         NULL,    72.00, 2, 1, 1, 2020, 'SHM',  'rent',   15000000.00, 'rented'),
-(5, 3, 5, 8, 'Villa Tepi Pantai Kuta',         'Jl. Pantai Kuta No. 88, Badung',       500.00, 250.00, 4, 4, 1, 2019, 'SHM',  'rent',    5000000.00, 'available'),
-(5, 3, 3, 3, 'Ruko Strategis Coblong Bandung', 'Jl. Setiabudi No. 21, Coblong',        100.00, 200.00, 0, 2, 3, 2015, 'HGB',  'sale', 1800000000.00, 'available'),
-(4, 2, 4, 7, 'Tanah Kavling Gubeng Surabaya',  'Jl. Raya Gubeng No. 45, Gubeng',       300.00,   NULL, 0, 0, 0, NULL,  NULL,   'sale',  800000000.00, 'available');
+   certificate_type, listing_type, price, rent_period, status) VALUES
+(4, 2, 1, 1, 'Rumah Mewah Kebayoran Baru',    'Jl. Melati No. 12, Kebayoran Baru',    200.00, 350.00, 4, 3, 2, 2018, 'SHM', 'sale', 2500000000.00, NULL,    'sold'),
+(4, 2, 2, 2, 'Apartemen Modern Menteng',       'Jl. Diponegoro No. 5, Menteng',         NULL,    72.00, 2, 1, 1, 2020, 'SHM', 'rent',   15000000.00, 'month', 'rented'),
+(5, 3, 5, 8, 'Villa Tepi Pantai Kuta',         'Jl. Pantai Kuta No. 88, Badung',       500.00, 250.00, 4, 4, 1, 2019, 'SHM', 'rent',    5000000.00, 'day',   'available'),
+(5, 3, 3, 3, 'Ruko Strategis Coblong Bandung', 'Jl. Setiabudi No. 21, Coblong',        100.00, 200.00, 0, 2, 3, 2015, 'HGB', 'sale', 1800000000.00, NULL,    'available'),
+(4, 2, 4, 7, 'Tanah Kavling Gubeng Surabaya',  'Jl. Raya Gubeng No. 45, Gubeng',       300.00,   NULL, 0, 0, 0, NULL,  NULL,  'sale',  800000000.00, NULL,    'available');
 
 -- Gambar properti
 INSERT IGNORE INTO property_image (property_id, image_url, is_primary, sort_order) VALUES
