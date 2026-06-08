@@ -1,7 +1,7 @@
 -- OmahKu — Advanced Queries (requirement 1.2.c)
 
 
--- Q1. Laporan pendapatan per agen
+-- Q1. Laporan pendapatan per agen (total keseluruhan)
 -- Hanya menghitung transaksi yang sukses.
 SELECT u.id                              AS agent_id,
        u.full_name                       AS agent_name,
@@ -13,6 +13,23 @@ WHERE t.status = 'success'
   AND t.deleted_at IS NULL
 GROUP BY u.id, u.full_name
 ORDER BY total_revenue DESC;
+
+
+-- Q1b. Laporan pendapatan BULANAN per agen (requirement 1.2.c)
+-- Dikelompokkan per agen + per bulan berdasarkan tanggal transaksi selesai.
+SELECT u.id                              AS agent_id,
+       u.full_name                       AS agent_name,
+       YEAR(t.completed_at)              AS revenue_year,
+       MONTH(t.completed_at)             AS revenue_month,
+       COUNT(t.id)                       AS total_transaction,
+       COALESCE(SUM(t.agreed_amount), 0) AS monthly_revenue
+FROM `user` u
+JOIN `transaction` t ON t.agent_id = u.id
+WHERE t.status = 'success'
+  AND t.completed_at IS NOT NULL
+  AND t.deleted_at IS NULL
+GROUP BY u.id, u.full_name, YEAR(t.completed_at), MONTH(t.completed_at)
+ORDER BY revenue_year DESC, revenue_month DESC, monthly_revenue DESC;
 
 
 -- Q2. Properti dengan rating rata-rata tertinggi
