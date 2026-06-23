@@ -33,15 +33,15 @@ INSERT IGNORE INTO location(province, city, district, postal_code) VALUES
 ('Jawa Timur','Surabaya','Gubeng','60281'),
 ('Bali','Badung','Kuta','80361');
 
--- Semua password = 'password123' (bcrypt placeholder)
+-- Semua password = 'password123' (bcrypt cost 10, hash valid)
 
 -- User (id 1=admin, 2=agen Budi, 3=agen Sari, 4=Andi pembeli, 5=Rini pembeli)
 INSERT IGNORE INTO `user` (NIK, username, full_name, email, phone_number, password, role) VALUES
-('3171000000000001', 'admin_omahku', 'Admin OmahKu', 'admin@omahku.id', '081200000001', '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3u', 'admin'),
-('3171000000000002', 'budi_agent',   'Budi Santoso', 'budi@omahku.id',  '081200000002', '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3u', 'agent'),
-('3171000000000003', 'sari_agent',   'Sari Dewi',    'sari@omahku.id',  '081200000003', '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3u', 'agent'),
-('3171000000000004', 'andi_user',    'Andi Pratama', 'andi@omahku.id',  '081200000004', '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3u', 'user'),
-('3171000000000005', 'rini_user',    'Rini Kusuma',  'rini@omahku.id',  '081200000005', '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3u', 'user');
+('3171000000000001', 'admin_omahku', 'Admin OmahKu', 'admin@omahku.id', '081200000001', '$2b$10$XzrnC8nm3fPB0Gipy7htwevDDjlYpzHdFGdDPM8/ohhSEsiPoYsIW', 'admin'),
+('3171000000000002', 'budi_agent',   'Budi Santoso', 'budi@omahku.id',  '081200000002', '$2b$10$XzrnC8nm3fPB0Gipy7htwevDDjlYpzHdFGdDPM8/ohhSEsiPoYsIW', 'agent'),
+('3171000000000003', 'sari_agent',   'Sari Dewi',    'sari@omahku.id',  '081200000003', '$2b$10$XzrnC8nm3fPB0Gipy7htwevDDjlYpzHdFGdDPM8/ohhSEsiPoYsIW', 'agent'),
+('3171000000000004', 'andi_user',    'Andi Pratama', 'andi@omahku.id',  '081200000004', '$2b$10$XzrnC8nm3fPB0Gipy7htwevDDjlYpzHdFGdDPM8/ohhSEsiPoYsIW', 'user'),
+('3171000000000005', 'rini_user',    'Rini Kusuma',  'rini@omahku.id',  '081200000005', '$2b$10$XzrnC8nm3fPB0Gipy7htwevDDjlYpzHdFGdDPM8/ohhSEsiPoYsIW', 'user');
 
 -- Agent profile (user_id 2=Budi, 3=Sari)
 INSERT IGNORE INTO agent_profile (user_id, agency_name, license_number, bio, verified_at) VALUES
@@ -63,13 +63,18 @@ INSERT IGNORE INTO property
 
 -- Gambar properti
 INSERT IGNORE INTO property_image (property_id, image_url, is_primary, sort_order) VALUES
-(1, 'https://example.com/img/prop1_main.jpg',  TRUE,  1),
-(1, 'https://example.com/img/prop1_back.jpg',  FALSE, 2),
-(2, 'https://example.com/img/prop2_main.jpg',  TRUE,  1),
-(3, 'https://example.com/img/prop3_main.jpg',  TRUE,  1),
-(3, 'https://example.com/img/prop3_pool.jpg',  FALSE, 2),
-(4, 'https://example.com/img/prop4_main.jpg',  TRUE,  1),
-(5, 'https://example.com/img/prop5_main.jpg',  TRUE,  1);
+-- Rumah Mewah Kebayoran Baru
+(1, 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80', TRUE,  1),
+(1, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80', FALSE, 2),
+-- Apartemen Modern Menteng
+(2, 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', TRUE,  1),
+-- Villa Tepi Pantai Kuta
+(3, 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=80', TRUE,  1),
+(3, 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80', FALSE, 2),
+-- Ruko Strategis Coblong Bandung
+(4, 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80', TRUE,  1),
+-- Tanah Kavling Gubeng Surabaya
+(5, 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80', TRUE,  1);
 
 -- Fasilitas properti
 -- facility: 1=Garasi, 2=Carport, 3=AC, 5=Kolam Renang, 6=Gym, 7=Balkon, 8=Taman, 9=CCTV
