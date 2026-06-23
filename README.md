@@ -481,3 +481,210 @@ transaction  ───<  review
 ```
 
 Tanda `>───` dan `───<` menunjukkan sisi banyak dari sebuah relasi. Sebagai contoh, satu `user` dapat memiliki banyak `property`, dan satu `property` dapat memiliki banyak baris foto pada `property_image`.
+
+---
+
+## Dokumentasi Database Bagian 2: Data Awal (`db/002_seed.sql`)
+
+File `002_seed.sql` mengisi tabel-tabel kosong yang dibuat oleh `001_schema.sql` dengan data. Data ini terbagi menjadi dua jenis. Pertama, data master berupa kategori, fasilitas, dan lokasi yang menjadi acuan tetap. Kedua, data contoh berupa pengguna, properti, transaksi, dan ulasan yang dipakai untuk menguji query dan menampilkan isi pada aplikasi.
+
+### Perintah `INSERT IGNORE`
+
+Seluruh pengisian data memakai bentuk berikut:
+
+```sql
+INSERT IGNORE INTO nama_tabel (kolom1, kolom2, ...) VALUES
+(nilai1, nilai2, ...),
+(nilai1, nilai2, ...);
+```
+
+`INSERT INTO` memasukkan baris baru ke sebuah tabel. Daftar kolom ditulis di dalam tanda kurung setelah nama tabel, lalu nilai untuk setiap baris ditulis setelah `VALUES`. Beberapa baris dapat dimasukkan sekaligus dengan memisahkannya menggunakan koma.
+
+Tambahan kata `IGNORE` membuat MySQL melewati baris yang akan menimbulkan error duplikasi, alih-alih menghentikan seluruh perintah. Sebagai contoh, jika kategori `Rumah` sudah ada, baris tersebut dilewati tanpa error. Dengan begitu file ini aman dijalankan ulang.
+
+Urutan pengisian mengikuti ketergantungan antar tabel. Tabel acuan seperti `property_category`, `facility`, dan `location` diisi lebih dulu, kemudian `user`, lalu `property`, dan seterusnya. Urutan ini penting karena tabel `property` memuat Foreign Key yang harus menunjuk ke baris yang sudah ada pada tabel acuan dan tabel `user`.
+
+### Data master
+
+Tabel kategori properti diisi dengan lima kategori.
+
+```sql
+INSERT IGNORE INTO property_category(name, description) VALUES
+('Rumah','Rumah tinggal'),
+('Apartemen','Unit apartemen'),
+('Ruko','Rumah toko'),
+('Tanah','Kavling/lahan kosong'),
+('Villa','Villa/rumah peristirahatan');
+```
+
+Setiap baris berisi nama kategori dan deskripsinya. Karena kolom `id` pada tabel ini bersifat `AUTO_INCREMENT`, nomornya terisi otomatis sehingga tidak ditulis di sini. Kategori pertama mendapat `id` 1, kategori kedua `id` 2, dan seterusnya. Nomor ini nantinya dipakai oleh tabel `property` melalui kolom `category_id`.
+
+Tabel fasilitas diisi dengan sebelas fasilitas.
+
+```sql
+INSERT IGNORE INTO facility(name, is_countable, icon) VALUES
+('Garasi', TRUE, 'car'),
+('Carport', TRUE, 'car-front'),
+('AC', TRUE, 'air-vent'),
+('Water Heater', TRUE, 'flame'),
+('Kolam Renang', FALSE, 'waves'),
+('Gym', FALSE, 'dumbbell'),
+('Balkon', TRUE, 'panels-top-left'),
+('Taman', TRUE, 'trees'),
+('CCTV', FALSE, 'cctv'),
+('Security 24 Jam', FALSE, 'shield-check'),
+('Smart Lock', FALSE, 'lock');
+```
+
+Kolom `is_countable` diisi `TRUE` untuk fasilitas yang dapat dihitung jumlahnya seperti Garasi dan AC, serta `FALSE` untuk fasilitas yang sifatnya ada atau tidak seperti Kolam Renang dan CCTV. Kolom `icon` menyimpan nama ikon untuk tampilan aplikasi.
+
+Tabel lokasi diisi dengan delapan wilayah.
+
+```sql
+INSERT IGNORE INTO location(province, city, district, postal_code) VALUES
+('DKI Jakarta','Jakarta Selatan','Kebayoran Baru','12110'),
+('DKI Jakarta','Jakarta Pusat','Menteng','10310'),
+('Jawa Barat','Bandung','Coblong','40132'),
+('Jawa Barat','Bekasi','Bekasi Selatan','17141'),
+('Jawa Tengah','Semarang','Semarang Tengah','50132'),
+('DI Yogyakarta','Sleman','Depok','55281'),
+('Jawa Timur','Surabaya','Gubeng','60281'),
+('Bali','Badung','Kuta','80361');
+```
+
+Setiap baris berisi provinsi, kota, kecamatan, dan kode pos. Kombinasi provinsi, kota, dan kecamatan tidak boleh kembar karena dibatasi oleh constraint `UNIQUE` pada tabel `location`.
+
+### Data contoh: pengguna
+
+```sql
+INSERT IGNORE INTO `user` (NIK, username, full_name, email, phone_number, password, role) VALUES
+('3171000000000001', 'admin_omahku', 'Admin OmahKu', 'admin@omahku.id', '081200000001', '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3u', 'admin'),
+('3171000000000002', 'budi_agent',   'Budi Santoso', 'budi@omahku.id',  '081200000002', '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3u', 'agent'),
+('3171000000000003', 'sari_agent',   'Sari Dewi',    'sari@omahku.id',  '081200000003', '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3u', 'agent'),
+('3171000000000004', 'andi_user',    'Andi Pratama', 'andi@omahku.id',  '081200000004', '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3u', 'user'),
+('3171000000000005', 'rini_user',    'Rini Kusuma',  'rini@omahku.id',  '081200000005', '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3u', 'user');
+```
+
+Lima pengguna dibuat dengan peran berbeda. Pengguna pertama adalah admin, pengguna kedua dan ketiga adalah agen (Budi dan Sari), serta pengguna keempat dan kelima adalah pengguna biasa (Andi dan Rini). Sesuai urutan pemasukan, Budi mendapat `id` 2, Sari `id` 3, Andi `id` 4, dan Rini `id` 5. Nomor-nomor ini dipakai pada tabel berikutnya untuk menentukan pemilik, agen, dan pelanggan.
+
+Kolom `password` berisi teks acak hasil hash, bukan kata sandi asli. Seluruh pengguna contoh memakai nilai hash yang sama untuk menyederhanakan data uji.
+
+### Data contoh: profil agen
+
+```sql
+INSERT IGNORE INTO agent_profile (user_id, agency_name, license_number, bio, verified_at) VALUES
+(2, 'Budi Property', 'LIC-JKT-001', 'Agen properti berpengalaman 5 tahun di Jakarta.', '2023-01-15 10:00:00'),
+(3, 'Sari Realty',   'LIC-BDG-002', 'Spesialis properti residensial Bandung & Bali.',  '2023-03-10 10:00:00');
+```
+
+Hanya pengguna dengan peran agen yang memiliki profil. Kolom `user_id` bernilai 2 dan 3 yang menunjuk ke Budi dan Sari pada tabel `user`. Kolom `verified_at` diisi tanggal sehingga kedua agen dianggap sudah terverifikasi.
+
+### Data contoh: properti
+
+```sql
+INSERT IGNORE INTO property
+  (owner_id, agent_id, category_id, location_id, title, address_detail,
+   land_area, building_area, bedrooms, bathrooms, floors, year_built,
+   certificate_type, listing_type, price, rent_period, status) VALUES
+(4, 2, 1, 1, 'Rumah Mewah Kebayoran Baru',    'Jl. Melati No. 12, Kebayoran Baru',    200.00, 350.00, 4, 3, 2, 2018, 'SHM', 'sale', 2500000000.00, NULL,    'sold'),
+(4, 2, 2, 2, 'Apartemen Modern Menteng',       'Jl. Diponegoro No. 5, Menteng',         NULL,    72.00, 2, 1, 1, 2020, 'SHM', 'rent',   15000000.00, 'month', 'rented'),
+(5, 3, 5, 8, 'Villa Tepi Pantai Kuta',         'Jl. Pantai Kuta No. 88, Badung',       500.00, 250.00, 4, 4, 1, 2019, 'SHM', 'rent',    5000000.00, 'day',   'available'),
+(5, 3, 3, 3, 'Ruko Strategis Coblong Bandung', 'Jl. Setiabudi No. 21, Coblong',        100.00, 200.00, 0, 2, 3, 2015, 'HGB', 'sale', 1800000000.00, NULL,    'available'),
+(4, 2, 4, 7, 'Tanah Kavling Gubeng Surabaya',  'Jl. Raya Gubeng No. 45, Gubeng',       300.00,   NULL, 0, 0, 0, NULL,  NULL,  'sale',  800000000.00, NULL,    'available');
+```
+
+Lima properti dibuat. Empat kolom pertama pada setiap baris adalah Foreign Key. Sebagai contoh pada baris pertama, `owner_id` bernilai 4 menunjuk Andi sebagai pemilik, `agent_id` bernilai 2 menunjuk Budi sebagai agen, `category_id` bernilai 1 menunjuk kategori Rumah, dan `location_id` bernilai 1 menunjuk Kebayoran Baru.
+
+Kolom `listing_type` dan `rent_period` perlu diperhatikan. Properti yang dijual diisi `'sale'` dengan `rent_period` bernilai `NULL`. Properti yang disewa diisi `'rent'` dan wajib mengisi `rent_period`, misalnya `'month'` untuk Apartemen Menteng dan `'day'` untuk Villa Kuta. Kewajiban ini ditegakkan oleh trigger pada file `003`, sehingga properti sewa tanpa `rent_period` akan ditolak.
+
+Kolom `land_area` dan `building_area` boleh `NULL`. Apartemen tidak memiliki luas tanah sehingga `land_area` bernilai `NULL`, dan tanah kavling tidak memiliki bangunan sehingga `building_area` bernilai `NULL`. Kolom `status` diisi beragam, yaitu `sold`, `rented`, dan `available`, untuk menggambarkan berbagai kondisi properti.
+
+### Data contoh: foto, fasilitas, dan wishlist
+
+```sql
+INSERT IGNORE INTO property_image (property_id, image_url, is_primary, sort_order) VALUES
+(1, 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80', TRUE,  1),
+(1, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80', FALSE, 2),
+(2, 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', TRUE,  1),
+(3, 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=80', TRUE,  1),
+(3, 'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80', FALSE, 2),
+(4, 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80', TRUE,  1),
+(5, 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80', TRUE,  1);
+```
+
+Foto dihubungkan ke properti melalui `property_id`. Beberapa properti memiliki lebih dari satu foto. Foto dengan `is_primary` bernilai `TRUE` menjadi foto utama, dan `sort_order` mengatur urutan tampil.
+
+```sql
+INSERT IGNORE INTO property_facility (property_id, facility_id, quantity) VALUES
+(1, 1, 2), (1, 3, 5), (1, 9, 1),
+(2, 3, 2), (2, 7, 1),
+(3, 5, 1), (3, 6, 1), (3, 8, 2),
+(4, 2, 2), (4, 3, 4),
+(5, 8, 1);
+```
+
+Tabel ini menghubungkan properti dengan fasilitasnya. Setiap baris berisi `property_id`, `facility_id`, dan `quantity`. Sebagai contoh, baris `(1, 1, 2)` berarti properti 1 memiliki fasilitas 1 (Garasi) sebanyak 2 unit, dan `(1, 3, 5)` berarti properti 1 memiliki fasilitas 3 (AC) sebanyak 5 unit.
+
+```sql
+INSERT IGNORE INTO wishlist (user_id, property_id) VALUES
+(5, 1),
+(4, 3),
+(4, 4);
+```
+
+Tabel wishlist mencatat properti favorit pengguna. Baris `(5, 1)` berarti Rini menyukai properti 1, sedangkan Andi menyukai properti 3 dan 4.
+
+### Data contoh: pemesanan
+
+```sql
+INSERT IGNORE INTO booking (property_id, customer_id, requested_start_date, requested_end_date, status, notes) VALUES
+(1, 5, '2024-02-01', NULL,         'confirmed', 'Berminat beli cash.'),
+(2, 5, '2024-01-01', '2024-07-01', 'confirmed', 'Sewa 6 bulan.'),
+(3, 4, '2024-02-10', '2024-02-17', 'confirmed', 'Liburan 1 minggu.');
+```
+
+Tiga pemesanan dibuat, semuanya berstatus `confirmed` agar dapat dilanjutkan menjadi transaksi. Kolom `customer_id` menunjuk pengguna yang memesan, dan `property_id` menunjuk properti yang dipesan. Pemesanan untuk properti jual mengisi `requested_start_date` saja, sedangkan pemesanan sewa mengisi rentang tanggal mulai dan akhir.
+
+### Data contoh: transaksi dan detailnya
+
+```sql
+INSERT IGNORE INTO `transaction`
+  (booking_id, property_id, customer_id, agent_id, transaction_type, agreed_amount, status, completed_at) VALUES
+(1, 1, 5, 2, 'sale', 2500000000.00, 'success', '2024-03-01 14:00:00'),
+(2, 2, 5, 2, 'rent',     90500000.00, 'success', '2024-01-05 10:00:00'),
+(3, 3, 4, 3, 'rent',     35000000.00, 'success', '2024-02-12 09:00:00');
+```
+
+Tiga transaksi dibuat dari tiga pemesanan, semuanya berstatus `success`. Kolom `booking_id` menunjuk pemesanan asal, dan bersifat unik sehingga satu pemesanan hanya menghasilkan satu transaksi. Kolom `agreed_amount` menyimpan nilai kesepakatan.
+
+Nilai pada transaksi sewa dibuat konsisten dengan perhitungan biaya sewa. Transaksi kedua adalah sewa apartemen selama enam bulan seharga 15.000.000 per bulan ditambah biaya tambahan 500.000, sehingga totalnya 90.500.000. Transaksi ketiga adalah sewa villa selama tujuh hari seharga 5.000.000 per hari, sehingga totalnya 35.000.000.
+
+```sql
+INSERT IGNORE INTO sale_transaction (transaction_id, transfer_date, certificate_number) VALUES
+(1, '2024-03-01', 'SHM-JKT-2024-001');
+
+INSERT IGNORE INTO rent_transaction (transaction_id, start_date, end_date, price_per_period, additional_fee) VALUES
+(2, '2024-01-01', '2024-07-01', 15000000.00, 500000.00),
+(3, '2024-02-10', '2024-02-17',  5000000.00,       0.00);
+```
+
+Detail transaksi dipisah sesuai jenisnya. Transaksi 1 adalah transaksi jual, sehingga detailnya masuk ke `sale_transaction` berupa tanggal serah terima dan nomor sertifikat. Transaksi 2 dan 3 adalah transaksi sewa, sehingga detailnya masuk ke `rent_transaction` berupa rentang tanggal, harga per periode, dan biaya tambahan.
+
+### Data contoh: ulasan dan riwayat harga
+
+```sql
+INSERT IGNORE INTO review (transaction_id, property_id, reviewer_id, rating, comment) VALUES
+(1, 1, 5, 5, 'Rumah sangat bagus, lokasi strategis! Proses jual beli lancar.'),
+(2, 2, 5, 4, 'Apartemen bersih dan nyaman, harga sesuai.'),
+(3, 3, 4, 5, 'Villa luar biasa, view pantai keren banget!');
+```
+
+Setiap transaksi memiliki satu ulasan. Kolom `reviewer_id` menunjuk pengguna yang memberi ulasan, dan `rating` berisi nilai 1 sampai 5 sesuai batasan constraint pada tabel `review`.
+
+```sql
+INSERT IGNORE INTO price_history (property_id, old_price, new_price, changed_by, changed_at) VALUES
+(1, 2800000000.00, 2500000000.00, 2, '2024-01-10 08:00:00'),
+(4, 2000000000.00, 1800000000.00, 3, '2024-03-05 09:30:00');
+```
+
+Riwayat harga diisi langsung sebagai data awal untuk menggambarkan properti yang pernah berubah harga. Baris pertama menunjukkan properti 1 turun harga dari 2.800.000.000 menjadi 2.500.000.000 oleh pengguna 2. Pada operasi normal, baris seperti ini dibuat otomatis oleh trigger pada file `003` setiap kali harga properti diubah.
